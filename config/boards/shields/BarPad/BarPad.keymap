@@ -1,0 +1,24 @@
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+
+/ {
+    sensors {
+        status = "okay";
+        compatible = "zmk,keymap-sensors";
+        sensors = <&left_encoder>;
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+
+        default_layer {
+            bindings = <
+                &kp KP_N7 &kp KP_N8 &kp KP_N9
+                &kp KP_N4 &kp KP_N5 &kp KP_N6
+                &kp KP_N1 &kp KP_N2 &kp C_PP
+            >;
+            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
+        };
+    };
+};
