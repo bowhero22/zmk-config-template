@@ -12,33 +12,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 1. C/C++ 컴파일 캐시 (빌드 속도 단축)
-      - name: Cache ccache
+      # 1. C/C++ 컴파일 캐시 설정 (컨테이너 내부 경로 고정)
+      - name: Cache Ccache
         uses: actions/cache@v4
         with:
-          path: ~/.cache/ccache
-          key: ${{ runner.os }}-ccache-${{ github.sha }}
+          path: .ccache
+          key: ${{ runner.os }}-ccache-${{ hashFiles('config/**') }}
           restore-keys: |
             ${{ runner.os }}-ccache-
 
-      # 2. West 모듈 및 .west 설정 캐시 (다운로드 속도 단축)
-      - name: Cache west modules
+      # 2. West 모듈 캐시 설정 (west update 다운로드 대폭 단축)
+      - name: Cache West Modules
         uses: actions/cache@v4
-        env:
-          cache-name: cache-zephyr-modules
         with:
           path: |
             .west
-            modules/
-            tools/
-            zephyr/
-            bootloader/
-            zmk/
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/west.yml') }}
+            modules
+            tools
+            zephyr
+            bootloader
+            zmk
+          key: ${{ runner.os }}-west-${{ hashFiles('config/west.yml', '**/west.yml') }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+            ${{ runner.os }}-west-
 
       - name: West Init
         run: west init -l config || west init -l . || true
@@ -49,21 +45,23 @@ jobs:
       - name: West Zephyr export
         run: west zephyr-export
 
-      # 1. BarPad 본체 빌드
+      # 3. BarPad 본체 빌드 (독립 빌드 폴더: build/barpad)
       - name: West Build (BarPad)
-        run: west build -s zmk/app -b xiao_ble -- -DSHIELD=BarPad -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
+        env:
+          CCACHE_DIR: ${{ github.workspace }}/.ccache
+        run: |
+          west build -s zmk/app -b xiao_ble -d build/barpad -- -DSHIELD=BarPad -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
+          cp build/barpad/zephyr/zmk.uf2 BarPad_xiao_ble.uf2
 
-      - name: Rename BarPad UF2
-        run: cp build/zephyr/zmk.uf2 BarPad_xiao_ble.uf2
-
-      # 2. BarPad Dongle (nRF52840 Dongle) 수신기 빌드
+      # 4. BarPad Dongle 수신기 빌드 (독립 빌드 폴더: build/dongle)
       - name: West Build (BarPad Dongle)
-        run: west build -p -s zmk/app -b nrf52840dongle/nrf52840 -- -DSHIELD=BarPad_dongle -DZMK_CONFIG="${GITHUB_WORKSPACE}/config" -DCONFIG_ZMK_STUDIO=n -DEXTRA_DTC_OVERLAY_FILE=""
+        env:
+          CCACHE_DIR: ${{ github.workspace }}/.ccache
+        run: |
+          west build -s zmk/app -b nrf52840dongle/nrf52840 -d build/dongle -- -DSHIELD=BarPad_dongle -DZMK_CONFIG="${GITHUB_WORKSPACE}/config" -DCONFIG_ZMK_STUDIO=n -DEXTRA_DTC_OVERLAY_FILE=""
+          cp build/dongle/zephyr/zmk.hex BarPad_dongle_nrf52840.hex
 
-      - name: Rename BarPad Dongle HEX
-        run: cp build/zephyr/zmk.hex BarPad_dongle_nrf52840.hex
-
-      # 결과물 업로드
+      # 5. 결과물 아카이브 업로드
       - name: Archive Firmwares
         uses: actions/upload-artifact@v4
         with:
