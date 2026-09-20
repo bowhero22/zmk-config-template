@@ -5,11 +5,11 @@
     chosen {
         zmk,kscan = &kscan0;
         zmk,underglow = &led_strip;
-        zmk,ext-power = &ext_power;
+        zmk,ext-power = &ext_power_node;
     };
 
-    /* VBUS 직결 회로 특성상 ZMK 빌드 에러 방지를 위한 가상 Ext-Power 노드 */
-    ext_power: ext-power {
+    /* ext_power 대신 ext_power_node 라벨명 사용하여 ZMK 기본 동작과의 충돌 방지 */
+    ext_power_node: ext-power {
         compatible = "zmk,ext-power-generic";
         control-gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
         init-delay-ms = <50>;
