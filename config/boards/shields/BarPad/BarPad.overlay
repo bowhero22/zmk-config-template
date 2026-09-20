@@ -6,6 +6,13 @@
         zmk,kscan = &kscan0;
         zmk,matrix-transform = &default_transform;
         zmk,underglow = &led_strip;
+        zmk,ext-power = &ext_power;
+    };
+
+    /* 가상 전원 제어 노드 (MOSFET 없이 빌드 에러 해결용) */
+    ext_power: ext-power {
+        compatible = "zmk,ext-power-generic";
+        label = "EXT_POWER";
     };
 
     /* [key1 key2 key3 key4] -> (0,0) (0,1) (0,2) (0,3)
