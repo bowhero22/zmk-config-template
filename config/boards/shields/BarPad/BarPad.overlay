@@ -5,8 +5,17 @@
     chosen {
         zmk,kscan = &kscan0;
         zmk,underglow = &led_strip;
+        zmk,ext-power = &ext_power;
     };
 
+    /* VBUS 직결 회로 특성상 ZMK 빌드 에러 방지를 위한 가상 Ext-Power 노드 */
+    ext_power: ext-power {
+        compatible = "zmk,ext-power-generic";
+        control-gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+        init-delay-ms = <50>;
+    };
+
+    /* 8개 스위치 다이렉트 핀 연결 (Direct Kscan) */
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-direct";
         wakeup-source;
@@ -22,6 +31,7 @@
             , <&xiao_d 8 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;/* key8 (SW8) */
     };
 
+    /* 로터리 엔코더 설정 */
     left_encoder: encoder_left {
         compatible = "alps,ec11";
         a-gpios = <&xiao_d 9 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;   /* KNOB_A (D9) */
@@ -37,7 +47,7 @@
     };
 };
 
-/* XIAO BLE D0 (P0.02) SPI MOSI 설정 */
+/* XIAO BLE D0 (P0.02) SPI MOSI - SK6812/WS2812 RGB 제어용 */
 &pinctrl {
     spi3_default: spi3_default {
         group1 {
@@ -65,7 +75,7 @@
         label = "WS2812";
         reg = <0>;
         spi-max-frequency = <4000000>;
-        chain-length = <8>; /* 총 8개 SK6812 LED */
+        chain-length = <8>; /* 총 8개 LED */
         spi-one-frame = <0x70>;
         spi-zero-frame = <0x40>;
         color-mapping = <LED_COLOR_ID_GREEN LED_COLOR_ID_RED LED_COLOR_ID_BLUE>;
