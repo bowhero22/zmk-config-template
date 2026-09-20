@@ -1,0 +1,9 @@
+if SHIELD_BARPAD_DONGLE
+
+config ZMK_KEYBOARD_NAME
+    default "BarPad Dongle"
+
+config ZMK_SPLIT_BLE_ROLE_CENTRAL
+    default y
+
+endif
