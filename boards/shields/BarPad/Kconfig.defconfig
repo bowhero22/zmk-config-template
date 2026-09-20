@@ -1,4 +1,0 @@
-if SHIELD_BARPAD
-config ZMK_KEYBOARD_NAME
-    default "BarPad"
-endif
