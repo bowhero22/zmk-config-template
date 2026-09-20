@@ -58,7 +58,7 @@ jobs:
         env:
           CCACHE_DIR: ${{ github.workspace }}/.ccache
         run: |
-          west build -s zmk/app -b nrf52840dongle/nrf52840 -d build/dongle -- -DSHIELD=BarPad_dongle -DZMK_CONFIG="${GITHUB_WORKSPACE}/config" -DCONFIG_ZMK_STUDIO=n -DEXTRA_DTC_OVERLAY_FILE=""
+          west build -s zmk/app -b nrf52840dongle/nrf52840 -d build/dongle -- -DSHIELD=BarPad_dongle -DZMK_CONFIG="${GITHUB_WORKSPACE}/config" -DEXTRA_DTC_OVERLAY_FILE=""
           cp build/dongle/zephyr/zmk.hex BarPad_dongle_nrf52840.hex
 
       # 5. 결과물 아카이브 업로드
