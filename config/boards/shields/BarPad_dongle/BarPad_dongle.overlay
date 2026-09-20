@@ -1,4 +1,5 @@
 #include <dt-bindings/zmk/matrix_transform.h>
+#include <physical_layouts.dtsi>
 
 / {
     chosen {
@@ -21,7 +22,6 @@
         compatible = "zmk,physical-layout";
         display-name = "Default Layout";
         transform = <&default_transform>;
-        kscan = <&mock_kscan>;
         keys
             = <&key_physical_attrs 100 100    0    0 0 0 0>
             , <&key_physical_attrs 100 100  100    0 0 0 0>
@@ -39,10 +39,5 @@
         columns = <0>;
         rows = <0>;
         events = <0>;
-    };
-
-    key_physical_attrs: key_physical_attrs {
-        compatible = "zmk,key-physical-attrs";
-        #zmk,physical-layout-attr-cells = <7>;
     };
 };
