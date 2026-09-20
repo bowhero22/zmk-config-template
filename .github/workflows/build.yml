@@ -58,7 +58,7 @@ jobs:
 
       # 2. BarPad Dongle (nRF52840 Dongle) 수신기 빌드
       - name: West Build (BarPad Dongle)
-        run: west build -p -s zmk/app -b nrf52840dongle/nrf52840 -- -DSHIELD=BarPad_dongle -DZMK_CONFIG="${GITHUB_WORKSPACE}/config" -DCONFIG_ZMK_STUDIO=y -DEXTRA_DTC_OVERLAY_FILE=""
+        run: west build -p -s zmk/app -b nrf52840dongle/nrf52840 -- -DSHIELD=BarPad_dongle -DZMK_CONFIG="${GITHUB_WORKSPACE}/config" -DEXTRA_DTC_OVERLAY_FILE=""
 
       - name: Rename BarPad Dongle HEX
         run: cp build/zephyr/zmk.hex BarPad_dongle_nrf52840.hex
