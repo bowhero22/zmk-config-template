@@ -1,0 +1,14 @@
+---
+include:
+  - board: xiao_ble
+    shield: BarPad
+
+  - board: nrf52840dongle_nrf52840
+    shield: BarPad_dongle
+    snippet: studio-rpc-usb-uart
+    cmake-args: -DCONFIG_ZMK_STUDIO=y
+
+  - board: xiao_ble
+    shield: BarPad_dongle
+    snippet: studio-rpc-usb-uart
+    cmake-args: -DCONFIG_ZMK_STUDIO=y

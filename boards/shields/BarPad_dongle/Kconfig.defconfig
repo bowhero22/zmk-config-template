@@ -1,0 +1,4 @@
+if SHIELD_BARPAD_DONGLE
+config ZMK_KEYBOARD_NAME
+    default "BarPad Dongle"
+endif
