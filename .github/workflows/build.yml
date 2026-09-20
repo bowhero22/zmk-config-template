@@ -12,25 +12,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 1. C/C++ 컴파일 캐시 (빌드 속도 단축)
+      - name: Cache ccache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ccache
+          key: ${{ runner.os }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-ccache-
+
+      # 2. West 모듈 및 .west 설정 캐시 (다운로드 속도 단축)
       - name: Cache west modules
         uses: actions/cache@v4
         env:
           cache-name: cache-zephyr-modules
         with:
           path: |
+            .west
             modules/
             tools/
             zephyr/
             bootloader/
             zmk/
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('manifest-dir/west.yml') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/west.yml') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
       - name: West Init
-        run: west init -l config || west init -l .
+        run: west init -l config || west init -l . || true
 
       - name: West Update
         run: west update
@@ -52,7 +63,7 @@ jobs:
       - name: Rename BarPad Dongle HEX
         run: cp build/zephyr/zmk.hex BarPad_dongle_nrf52840.hex
 
-      # 결과물 업로드 (최신 v4 반영)
+      # 결과물 업로드
       - name: Archive Firmwares
         uses: actions/upload-artifact@v4
         with:
